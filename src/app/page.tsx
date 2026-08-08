@@ -7,7 +7,7 @@ import HeroSection from "@/components/section/hero-section";
 import HolopinSection from "@/components/section/holopin-section";
 import ProjectsSection from "@/components/section/projects-section";
 import SkillsSection from "@/components/section/skills-section";
-import TestimonialsSection from "@/components/section/testimonials-section";
+import SocialSection from "@/components/section/social-section";
 import WorkSection from "@/components/section/work-section";
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
 
@@ -67,10 +67,10 @@ export default function Page() {
       <section id="testimonials">
         <div className="flex min-h-0 flex-col gap-y-6">
           <BlurFade delay={BLUR_FADE_DELAY * 18}>
-            <h2 className="font-heading text-xl font-bold">Testimonials</h2>
+            <h2 className="font-heading text-xl font-bold">Social updates</h2>
           </BlurFade>
           <BlurFade delay={BLUR_FADE_DELAY * 19}>
-            <TestimonialsSection />
+            <SocialSection />
           </BlurFade>
         </div>
       </section>

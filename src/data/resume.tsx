@@ -53,6 +53,10 @@ export interface Testimonial {
   content: string;
 }
 
+export interface TweetItem {
+  id: string;
+}
+
 export interface ProjectLink {
   type: string;
   href: string;
@@ -95,6 +99,7 @@ export interface Data {
   navbar: NavItem[];
   contact: Contact;
   testimonials: Testimonial[];
+  tweets: TweetItem[];
   work: WorkExperience[];
   education: Education[];
   projects: Project[];
@@ -408,6 +413,19 @@ export const DATA: Data = {
       role: "Product Designer, Design Studio",
       content:
         "Siddhartha is the rare developer who respects the design system. Pixel-perfect implementations, smooth animations, and zero context-switching friction.",
+    },
+  ],
+  // Add your tweet IDs here, e.g. { id: "1441032681968212480" }
+  // Find them in the tweet URL: https://x.com/x0lg0n/status/<THIS_IS_THE_ID>
+  tweets: [
+    {
+      id: "2078530144629829949",
+    },
+    {
+      id: "2082133812058996984",
+    },
+    {
+      id: "2032831202558607842",
     },
   ],
 };
