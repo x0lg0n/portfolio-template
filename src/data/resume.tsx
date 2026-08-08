@@ -1,5 +1,10 @@
 import { Icons, type IconProps } from "@/components/icons";
-import { HomeIcon, NotebookIcon, type LucideIcon } from "lucide-react";
+import {
+  CameraIcon,
+  HomeIcon,
+  NotebookIcon,
+  type LucideIcon,
+} from "lucide-react";
 
 export type IconComponent = (props: IconProps) => React.ReactNode;
 
@@ -181,7 +186,7 @@ export const DATA: Data = {
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
     { href: "/blog", icon: NotebookIcon, label: "Blog" },
-    { href: "/work", icon: NotebookIcon, label: "Work" },
+    { href: "/gallery", icon: CameraIcon, label: "Gallery" },
   ],
   contact: {
     email: "kumarsiddharthakain@gmail.com",

@@ -21,6 +21,7 @@ const NAV_LINKS = [
   { label: "Work", href: "/work" },
   { label: "Projects", href: "/projects" },
   { label: "Blog", href: "/blog" },
+  { label: "Gallery", href: "/gallery" },
 ];
 
 export default function PaletteSidebar() {
