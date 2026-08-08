@@ -1,0 +1,277 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import { useSyncExternalStore } from "react";
+import { GitHubCalendar } from "react-github-calendar";
+import {
+  ArrowUpRight,
+  CircleDot,
+  GitMerge,
+  GitPullRequest,
+} from "lucide-react";
+
+import type { ContributionItem } from "@/app/api/contributions/route";
+import { type Theme, usePalette } from "@/components/palette-provider";
+import { DATA } from "@/data/resume";
+import { Tag } from "@/components/tag";
+import { cn } from "@/lib/utils";
+
+const emptySubscribe = () => () => {};
+
+const graphColors: Record<Theme, [string, string, string, string, string]> = {
+  light: ["#fafafa", "#a0a0a0", "#666666", "#333333", "#1a7f37"],
+  dark: ["#1a1a1a", "#555555", "#999999", "#cccccc", "#4ade80"],
+  latte: ["#ccd0da", "#bcc0cc", "#acb0be", "#9ca0b0", "#40a02b"],
+  frappe: ["#414559", "#51576d", "#626880", "#737994", "#a6d189"],
+  macchiato: ["#363a4f", "#494d64", "#5b6078", "#6e738d", "#a6da95"],
+  mocha: ["#313244", "#45475a", "#6c7086", "#a6adc8", "#a6e3a1"],
+};
+
+const stateStyles: Record<ContributionItem["state"], string> = {
+  open: "text-link border-link/30",
+  merged: "text-primary border-primary/30",
+  closed: "text-muted-foreground border-border",
+};
+
+const stateTextStyles: Record<ContributionItem["state"], string> = {
+  open: "text-link",
+  merged: "text-primary",
+  closed: "text-muted-foreground",
+};
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+export default function ContributionsSection() {
+  const [items, setItems] = React.useState<ContributionItem[]>([]);
+  const [loaded, setLoaded] = React.useState(false);
+  const [rateLimited, setRateLimited] = React.useState(false);
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
+  const { theme, accent } = usePalette();
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+
+  React.useEffect(() => {
+    const CACHE_KEY = "contributions-cache";
+    const CACHE_TTL = 15 * 60 * 1000;
+    let cancelled = false;
+
+    const apply = (data: ContributionItem[], limited: boolean) => {
+      if (cancelled) return;
+      setItems(data);
+      setRateLimited(limited);
+      setLoaded(true);
+    };
+
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached) as {
+          data: ContributionItem[];
+          ts: number;
+        };
+        if (Date.now() - parsed.ts < CACHE_TTL && parsed.data.length > 0) {
+          apply(parsed.data, false);
+          return;
+        }
+      } catch {
+        // ignore corrupt cache
+      }
+    }
+
+    fetch("/api/contributions")
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data: { items: ContributionItem[]; rateLimited?: boolean }) => {
+        apply(data.items ?? [], Boolean(data.rateLimited));
+        if (data.items && data.items.length > 0) {
+          localStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({ data: data.items, ts: Date.now() })
+          );
+        }
+      })
+      .catch(() => apply([], true));
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const colors = graphColors[theme];
+  const isLightGraph = theme === "light" || theme === "latte";
+  const graphTheme = accent
+    ? ([...colors.slice(0, 4), accent] as [
+        string,
+        string,
+        string,
+        string,
+        string,
+      ])
+    : colors;
+
+  return (
+    <div className="flex flex-col gap-y-8">
+      <div className="flex flex-col gap-y-4 items-center justify-center">
+        <div className="flex items-center w-full">
+          <div className="flex-1 h-px bg-linear-to-r from-transparent from-5% via-border via-95% to-transparent" />
+          <div className="border bg-primary z-10 rounded-xl px-4 py-1">
+            <span className="text-background text-sm font-medium">
+              Open Source
+            </span>
+          </div>
+          <div className="flex-1 h-px bg-linear-to-l from-transparent from-5% via-border via-95% to-transparent" />
+        </div>
+        <div className="flex flex-col gap-y-3 items-center justify-center">
+          <h2 className="font-heading text-3xl font-bold tracking-tighter sm:text-4xl">
+            Building in public
+          </h2>
+          <p className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed text-balance text-center">
+            Pull requests, issues, and other activity across open source
+            projects — fetched live from GitHub.
+          </p>
+        </div>
+      </div>
+
+      <div className="w-full border border-border rounded-xl p-4 sm:p-6">
+        {mounted && (
+          <div className="w-full [&_svg]:w-full! [&_svg]:h-auto!">
+            <GitHubCalendar
+              username={DATA.githubUsername}
+              blockSize={11}
+              blockMargin={4}
+              colorScheme={isLightGraph ? "light" : "dark"}
+              theme={{ light: graphTheme, dark: graphTheme }}
+              fontSize={13}
+              showColorLegend={false}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="relative divide-y divide-dashed divide-border">
+        {!loaded ? (
+          <p className="py-4 text-sm font-mono text-muted-foreground">
+            fetching open source activity…
+          </p>
+        ) : items.length === 0 ? (
+          <p className="py-4 text-sm font-mono text-muted-foreground">
+            {rateLimited
+              ? "GitHub rate limit reached — contributions will reappear automatically. (Tip: set GITHUB_TOKEN in your env to fix this.)"
+              : "no contributions found."}
+          </p>
+        ) : (
+          items.map((item, index) => {
+            const isExpanded = activeIndex === index;
+
+            return (
+            <div
+              key={`${item.repo}-${item.number}`}
+              className={cn(
+                "relative group transition-colors duration-200 hover:bg-muted/30",
+                isExpanded && "bg-muted/30"
+              )}
+            >
+              <span className="absolute top-0 left-0 z-10 w-2 h-2 border-t border-l border-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="absolute top-0 right-0 z-10 w-2 h-2 border-t border-r border-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="absolute bottom-0 left-0 z-10 w-2 h-2 border-b border-l border-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="absolute bottom-0 right-0 z-10 w-2 h-2 border-b border-r border-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              <div
+                className="p-4 cursor-pointer select-none"
+                onClick={() => setActiveIndex(isExpanded ? null : index)}
+              >
+                <div className="flex items-start gap-3.5">
+                  <div
+                    className={cn(
+                      "w-11 h-11 flex-shrink-0 rounded-xl border bg-muted/50 flex items-center justify-center",
+                      item.state === "merged"
+                        ? "border-primary/30 text-primary"
+                        : item.state === "open"
+                          ? "border-link/30 text-link"
+                          : "border-border text-muted-foreground"
+                    )}
+                  >
+                    {item.state === "merged" ? (
+                      <GitMerge className="size-5" aria-hidden />
+                    ) : item.type === "PR" ? (
+                      <GitPullRequest className="size-5" aria-hidden />
+                    ) : (
+                      <CircleDot className="size-5" aria-hidden />
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-medium text-base leading-snug">
+                        {item.title}
+                      </h3>
+                      <span
+                        className={cn(
+                          "flex-shrink-0 rounded-md border px-2 py-0.5 font-mono text-[11px] uppercase",
+                          stateStyles[item.state]
+                        )}
+                      >
+                        {item.state}
+                      </span>
+                    </div>
+
+                    <p className="font-mono text-xs text-muted-foreground">
+                      <Link
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground hover:text-link transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {item.repo}
+                        <ArrowUpRight className="inline-block w-3 h-3 ml-0.5 align-text-bottom" />
+                      </Link>{" "}
+                      <span className="opacity-60">
+                        #{item.number} · {formatDate(item.createdAt)}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className={cn(
+                    "grid transition-all duration-300 ease-in-out",
+                    isExpanded
+                      ? "grid-rows-[1fr] opacity-100 mt-3"
+                      : "grid-rows-[0fr] opacity-0"
+                  )}
+                >
+                  <div className="overflow-hidden">
+                    <div className="space-y-3">
+                      <p className="text-sm text-muted-foreground text-justify leading-relaxed">
+                        {item.body || "No description provided."}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <Tag className={stateTextStyles[item.state]}>
+                          {item.state}
+                        </Tag>
+                        <Tag>
+                          {item.type} #{item.number}
+                        </Tag>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
