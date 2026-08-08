@@ -13,6 +13,7 @@ import {
 
 import type { ContributionItem } from "@/app/api/contributions/route";
 import { type Theme, usePalette } from "@/components/palette-provider";
+import { ACCENTS } from "@/components/palette-provider";
 import { DATA } from "@/data/resume";
 import { Tag } from "@/components/tag";
 import { cn } from "@/lib/utils";
@@ -20,13 +21,54 @@ import { cn } from "@/lib/utils";
 const emptySubscribe = () => () => {};
 
 const graphColors: Record<Theme, [string, string, string, string, string]> = {
-  light: ["#fafafa", "#a0a0a0", "#666666", "#333333", "#1a7f37"],
-  dark: ["#1a1a1a", "#555555", "#999999", "#cccccc", "#4ade80"],
-  latte: ["#ccd0da", "#bcc0cc", "#acb0be", "#9ca0b0", "#40a02b"],
-  frappe: ["#414559", "#51576d", "#626880", "#737994", "#a6d189"],
-  macchiato: ["#363a4f", "#494d64", "#5b6078", "#6e738d", "#a6da95"],
-  mocha: ["#313244", "#45475a", "#6c7086", "#a6adc8", "#a6e3a1"],
+  light: ["#f3f4f6", "#dbe7dd", "#a9cbb2", "#6fa984", "#1a7f37"],
+  dark: ["#1c2127", "#24352c", "#2f5240", "#4a7d5c", "#4ade80"],
+  latte: ["#eef0f4", "#dbe6dc", "#b8d3bc", "#8cb893", "#40a02b"],
+  frappe: ["#383c52", "#3f5147", "#4d6b55", "#6f9677", "#a6d189"],
+  macchiato: ["#252839", "#324238", "#45634d", "#689172", "#a6da95"],
+  mocha: ["#201f2e", "#2f4036", "#415d47", "#668a71", "#a6e3a1"],
 };
+
+function hexToRgb(hex: string): [number, number, number] {
+  const clean = hex.replace("#", "");
+  const full =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : clean;
+  const num = parseInt(full, 16);
+  return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
+}
+
+function mixHex(base: string, accent: string, t: number): string {
+  const a = hexToRgb(base);
+  const b = hexToRgb(accent);
+  const ch = (i: number) =>
+    Math.round(a[i] + (b[i] - a[i]) * t)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${ch(0)}${ch(1)}${ch(2)}`;
+}
+
+function buildRamp(
+  theme: Theme,
+  accent: string | null
+): [string, string, string, string, string] {
+  const base = graphColors[theme][0];
+  if (!accent) return graphColors[theme];
+  const isLight = theme === "light" || theme === "latte";
+  const entry = ACCENTS.find((a) => a.color === accent);
+  const accentColor = entry && isLight ? entry.lightColor : accent;
+  return [
+    base,
+    mixHex(base, accentColor, 0.32),
+    mixHex(base, accentColor, 0.58),
+    mixHex(base, accentColor, 0.8),
+    accentColor,
+  ];
+}
 
 const stateStyles: Record<ContributionItem["state"], string> = {
   open: "text-link border-link/30",
@@ -106,17 +148,9 @@ export default function ContributionsSection() {
     };
   }, []);
 
-  const colors = graphColors[theme];
+  const colors = buildRamp(theme, accent);
   const isLightGraph = theme === "light" || theme === "latte";
-  const graphTheme = accent
-    ? ([...colors.slice(0, 4), accent] as [
-        string,
-        string,
-        string,
-        string,
-        string,
-      ])
-    : colors;
+  const graphTheme = colors;
 
   return (
     <div className="flex flex-col gap-y-8">
@@ -146,11 +180,11 @@ export default function ContributionsSection() {
           <div className="w-full [&_svg]:w-full! [&_svg]:h-auto!">
             <GitHubCalendar
               username={DATA.githubUsername}
-              blockSize={11}
-              blockMargin={4}
+              blockSize={12}
+              blockMargin={3}
               colorScheme={isLightGraph ? "light" : "dark"}
               theme={{ light: graphTheme, dark: graphTheme }}
-              fontSize={13}
+              fontSize={12}
               showColorLegend={false}
             />
           </div>

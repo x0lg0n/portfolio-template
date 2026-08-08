@@ -4,6 +4,11 @@ import * as React from "react";
 import { ArrowRight, Mail, MessageSquare, User } from "lucide-react";
 
 import Meeting from "@/components/meeting";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { DATA } from "@/data/resume";
 
 interface FormData {
@@ -208,21 +213,33 @@ export default function ContactSection() {
               </p>
             </div>
 
-            <div className="p-4 w-full flex justify-start">
+            <div className="p-4 w-full flex justify-center">
               <div className="grid grid-cols-4 gap-3 w-full max-w-70">
                 {socials.map(([key, social]) => {
                   const Icon = social.icon;
                   return (
-                    <a
-                      key={key}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 btn flex items-center justify-center"
-                      title={social.name}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </a>
+                    <Tooltip key={key}>
+                      <TooltipTrigger
+                        render={
+                          <a
+                            href={social.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          />
+                        }
+                      >
+                        <div className="group flex items-center justify-center rounded-3xl border border-dotted border-border bg-card/90 backdrop-blur-3xl p-3 text-muted-foreground shadow-[0_0_10px_3px] shadow-primary/5 transition-all duration-300 hover:-translate-y-1 hover:bg-muted hover:text-link hover:border-primary/30">
+                          <Icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        sideOffset={8}
+                        className="rounded-xl bg-primary text-primary-foreground px-4 py-2 text-sm shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]"
+                      >
+                        <p>{social.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
                   );
                 })}
               </div>

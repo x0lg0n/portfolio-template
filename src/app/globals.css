@@ -382,15 +382,11 @@ html[data-magicui-theme-vt="active"]::view-transition-group(root) {
   @keyframes pulse-ring {
     0%,
     100% {
-      transform: scale(1);
-      opacity: 1;
-      box-shadow: 0 0 0 0 var(--pulse-color, oklch(from var(--bg) l c h / 0.55));
+      box-shadow: 0 0 0 0 var(--pulse-color, oklch(from var(--bg) l c h / 0.5));
     }
     50% {
-      transform: scale(1.07);
-      opacity: 0.85;
       box-shadow: 0 0 0 var(--distance)
-        var(--pulse-color, oklch(from var(--bg) l c h / 0.25));
+        var(--pulse-color, oklch(from var(--bg) l c h / 0));
     }
   }
 
