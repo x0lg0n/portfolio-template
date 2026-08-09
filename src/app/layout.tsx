@@ -3,6 +3,7 @@ import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
 import { PaletteProvider } from "@/components/palette-provider";
 import PaletteSidebar from "@/components/palette-sidebar";
+import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import SmoothScroll from "@/components/smooth-scroll";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -132,6 +133,7 @@ export default function RootLayout({
             </div>
             <Navbar />
             <PaletteSidebar />
+            <KeyboardShortcuts />
           </TooltipProvider>
         </PaletteProvider>
       </body>
