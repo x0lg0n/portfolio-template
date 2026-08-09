@@ -1,5 +1,5 @@
 import { BlurFade } from "@/components/magicui/blur-fade";
-import { SlabTitle } from "@/components/slab-title";
+import { PageHeader } from "@/components/page-header";
 import { Tag } from "@/components/tag";
 import { posts } from "@/data/posts";
 import { getExternalPosts } from "@/lib/feeds";
@@ -33,6 +33,7 @@ interface PostItem {
   href: string;
   external: boolean;
   platform?: string;
+  platformUrl?: string;
 }
 
 function formatDate(iso: string): string {
@@ -56,15 +57,17 @@ export default async function BlogPage() {
       tags: post.tags,
       href: `/blog/${post.slug}`,
       external: false,
+      platform: "blog",
     })),
     ...externalPosts.map((post) => ({
       title: post.title,
       publishedAt: post.publishedAt,
       summary: post.summary,
       tags: post.tags,
-      href: post.url,
+      href: `/blog/external/${post.slug}`,
       external: true,
       platform: post.platform,
+      platformUrl: post.url,
     })),
   ].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
@@ -72,19 +75,12 @@ export default async function BlogPage() {
 
   return (
     <section id="blog">
-      <BlurFade delay={BLUR_FADE_DELAY}>
-        <div className="flex flex-col gap-3 mb-8">
-          <div className="flex items-center gap-4 flex-wrap">
-            <SlabTitle title="Blog" />
-            <span className="ml-1 bg-card border border-border rounded-md px-2 py-1 text-muted-foreground text-sm">
-              {items.length} posts
-            </span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            My thoughts on software development, life, and more.
-          </p>
-        </div>
-      </BlurFade>
+      <PageHeader
+        path={["blog"]}
+        title="Blog"
+        count={items.length}
+        description="My thoughts on software development, life, and more."
+      />
 
       {items.length > 0 ? (
         <BlurFade delay={BLUR_FADE_DELAY * 2}>
@@ -94,9 +90,6 @@ export default async function BlogPage() {
                 <Link
                   className="flex items-start gap-x-2 group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   href={post.href}
-                  {...(post.external
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
                 >
                   <span className="text-xs font-mono tabular-nums font-medium mt-[5px]">
                     {String(id + 1).padStart(2, "0")}.
@@ -118,11 +111,16 @@ export default async function BlogPage() {
                         )}
                       </span>
                     </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {post.summary}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {formatDate(post.publishedAt)}
                       {post.platform && (
                         <span className="ml-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/70 border border-border rounded px-1.5 py-0.5 align-middle">
-                          via {post.platform}
+                          {post.external
+                            ? `via ${post.platform}`
+                            : post.platform}
                         </span>
                       )}
                     </p>

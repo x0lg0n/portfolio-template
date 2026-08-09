@@ -2,9 +2,11 @@ import { FEED_SOURCES, type FeedSource } from "@/data/feeds";
 
 export interface ExternalPost {
   title: string;
+  slug: string;
   url: string;
   publishedAt: string;
   summary: string;
+  content: string;
   tags: string[];
   platform: string;
   platformId: string;
@@ -25,6 +27,21 @@ function stripHtml(value: string): string {
   return decodeEntities(
     value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
   );
+}
+
+function stripMarkdown(value: string): string {
+  return value
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/`/g, "")
+    .replace(/(^|\s)#{1,6}\s/g, "$1")
+    .replace(/\*\*\*([^*]+)\*\*\*/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
+    .replace(/[>_~]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function field(item: string, name: string): string {
@@ -52,6 +69,15 @@ function truncate(value: string, max: number): string {
   return `${value.slice(0, max).replace(/\s+\S*$/, "")}…`;
 }
 
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
 export function parseRss(
   xml: string
 ): Omit<ExternalPost, "platform" | "platformId">[] {
@@ -63,8 +89,10 @@ export function parseRss(
       const url = decodeEntities(field(item, "link"));
       const pubDate = field(item, "pubDate") || field(item, "published");
       const description = stripHtml(field(item, "description"));
-      const content = stripHtml(
-        field(item, "content:encoded") || field(item, "encoded")
+      const content = decodeEntities(
+        field(item, "content:encoded") ||
+          field(item, "encoded") ||
+          field(item, "description")
       );
       const tags = [...item.matchAll(/<category[^>]*>([\s\S]*?)<\/category>/g)]
         .map((match) => stripHtml(match[1]))
@@ -72,9 +100,11 @@ export function parseRss(
 
       return {
         title,
+        slug: slugify(title),
         url,
         publishedAt: pubDate ? new Date(pubDate).toISOString() : "",
-        summary: truncate(content || description, 200),
+        summary: stripMarkdown(truncate(stripHtml(content || description), 200)),
+        content,
         tags,
       };
     })
@@ -94,6 +124,7 @@ export async function getExternalPosts(): Promise<ExternalPost[]> {
       const xml = await response.text();
       return parseRss(xml).map((post) => ({
         ...post,
+        slug: `${source.id}-${post.slug}`,
         platform: source.name,
         platformId: source.id,
       }));
