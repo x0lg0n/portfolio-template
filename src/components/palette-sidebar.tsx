@@ -42,7 +42,7 @@ export default function PaletteSidebar() {
       ) {
         return;
       }
-      if (e.key === "t" || e.key === "T") {
+      if (e.key === "k" || e.key === "K") {
         setOpen((prev) => !prev);
       }
       if (e.key === "Escape") {
@@ -72,7 +72,7 @@ export default function PaletteSidebar() {
       />
       <aside
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l border-border bg-card shadow-2xl transition-transform duration-300 ease-in-out",
+          "fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-l border-sidebar-border bg-sidebar text-sidebar-foreground shadow-2xl transition-transform duration-300 ease-in-out",
           open ? "translate-x-0" : "translate-x-full"
         )}
         role="dialog"
@@ -83,7 +83,7 @@ export default function PaletteSidebar() {
           <span className="font-heading text-base font-bold">Menu</span>
           <button
             onClick={() => setOpen(false)}
-            className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             aria-label="Close menu"
           >
             <X className="size-4" />
@@ -157,7 +157,7 @@ export default function PaletteSidebar() {
                   onClick={() => setAccent(selected ? null : a.color)}
                   className={cn(
                     "size-5 rounded-full border border-border transition-transform hover:scale-110",
-                    selected && "ring-2 ring-foreground/60 ring-offset-2 ring-offset-card"
+                    selected && "ring-2 ring-foreground/60 ring-offset-2 ring-offset-sidebar"
                   )}
                   style={{
                     backgroundColor: isDark ? a.color : a.lightColor,
@@ -183,8 +183,8 @@ export default function PaletteSidebar() {
                     className={cn(
                       "block rounded-lg px-3 py-2 text-sm transition-colors",
                       isActive
-                        ? "bg-muted text-foreground font-medium"
-                        : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                        : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
                     )}
                     aria-current={isActive ? "page" : undefined}
                   >
@@ -197,7 +197,7 @@ export default function PaletteSidebar() {
         </nav>
 
         <div className="flex-shrink-0 border-t border-dashed border-border px-4 py-3 font-mono text-[11px] text-muted-foreground">
-          press <span className="text-link">T</span> to toggle this menu
+          press <span className="text-link">K</span> to toggle this menu
         </div>
       </aside>
     </>
@@ -224,8 +224,8 @@ function ThemeButton({
       className={cn(
         "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors",
         selected
-          ? "bg-muted text-foreground"
-          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+          : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
       )}
       aria-pressed={selected}
     >

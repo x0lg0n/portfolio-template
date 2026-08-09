@@ -48,16 +48,18 @@ export default function Page() {
         </div>
       </section>
       <section id="projects">
-        <BlurFade delay={BLUR_FADE_DELAY * 14}>
-          <ProjectsSection limit={3} />
-        </BlurFade>
-        <BlurFade delay={BLUR_FADE_DELAY * 16}>
-          <div className="flex justify-center">
-            <InteractiveHoverButton href="/projects">
-              View More
-            </InteractiveHoverButton>
-          </div>
-        </BlurFade>
+        <div className="flex min-h-0 flex-col gap-y-6">
+          <BlurFade delay={BLUR_FADE_DELAY * 14}>
+            <ProjectsSection limit={3} />
+          </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 16}>
+            <div className="flex justify-center">
+              <InteractiveHoverButton href="/projects">
+                View More
+              </InteractiveHoverButton>
+            </div>
+          </BlurFade>
+        </div>
       </section>
       <section id="contributions">
         <BlurFade delay={BLUR_FADE_DELAY * 17}>

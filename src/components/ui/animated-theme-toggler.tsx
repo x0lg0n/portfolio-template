@@ -273,7 +273,7 @@ export const AnimatedThemeToggler = ({
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key.toLowerCase() !== "d") return;
+      if (e.key.toLowerCase() !== "t") return;
       const target = e.target as HTMLElement | null;
       if (
         target &&
