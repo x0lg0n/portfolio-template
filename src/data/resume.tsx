@@ -69,15 +69,20 @@ export interface ProjectLink {
 }
 
 export interface Project {
+  slug: string;
   title: string;
   href: string;
   dates: string;
+  date: string;
   active: boolean;
+  featured?: boolean;
   description: string;
   technologies: string[];
   links: ProjectLink[];
   image?: string;
+  imageAlt?: string;
   video?: string;
+  content?: string;
 }
 
 export interface NavItem {
@@ -164,7 +169,7 @@ export const DATA: Data = {
       "A short description of what Orka is — what problem it solves and who it's for. Edit this in src/data/resume.tsx.",
   },
   summary:
-    "At the end of 2022, I quit my job as a software engineer to go fulltime into building and scaling my own SaaS businesses. In the past, [I pursued a double degree in computer science and business](/#education), [interned at big tech companies in Silicon Valley](https://www.youtube.com/watch?v=d-LJ2e5qKdE), and [competed in over 21 hackathons for fun](/#hackathons).",
+    "I'm currently working as a [Software Engineer @ RiseIn](https://risein.com), building full-stack web applications with React, Next.js and TypeScript. Along the way I [pursued a double degree in computer science and business](/#education), [competed in over 21 hackathons](/#projects) and interned at big tech companies in Silicon Valley. Seeing code I wrote actually help people at scale is what keeps me building. Currently exploring Go and system design. Feel free to [shoot me an email](mailto:kumarsiddharthakain@gmail.com) if you'd like to chat!",
   avatarUrl: "/me.jpg",
   avatarGifUrl: "",
   qrCodeUrl: "/qr-code.png",
@@ -186,7 +191,6 @@ export const DATA: Data = {
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
     { href: "/blog", icon: NotebookIcon, label: "Blog" },
-    { href: "/gallery", icon: CameraIcon, label: "Gallery" },
   ],
   contact: {
     email: "kumarsiddharthakain@gmail.com",
@@ -324,10 +328,13 @@ export const DATA: Data = {
   ],
   projects: [
     {
-      title: "Project One",
+      slug: "chat-collect",
+      title: "Chat Collect",
       href: "https://project-one.com",
       dates: "Jan 2024 - Feb 2024",
+      date: "2024-02-01",
       active: true,
+      featured: true,
       description:
         "A short description of what this project does and why you built it. You can include [links](https://example.com) in markdown.",
       technologies: ["Next.js", "TypeScript", "TailwindCSS", "PostgreSQL"],
@@ -345,52 +352,90 @@ export const DATA: Data = {
       ],
       video:
         "https://pub-83c5db439b40468498f97946200806f7.r2.dev/chat-collect.mp4",
+      content: `## What it does
+
+Chat Collect lets you gather feedback from chat conversations in one place. It's built for teams that live in Slack, Discord, or Telegram and want their conversations to end up in a structured, searchable database.
+
+## How it works
+
+- **Ingestion** — a bot listens to channels you choose and streams new messages into the pipeline.
+- **Storage** — messages are normalized into a relational schema with full-text search.
+- **Reports** — an admin dashboard aggregates themes, sentiment, and volume over time.
+
+## Stack
+
+Built with **Next.js** and **TypeScript** on the frontend, a **PostgreSQL** database, and styled with **TailwindCSS**. Deployed on Vercel.`,
     },
     {
-      title: "Project One",
-      href: "https://project-one.com",
-      dates: "Jan 2024 - Feb 2024",
+      slug: "boutique-to-box",
+      title: "Boutique To Box",
+      href: "https://project-two.com",
+      dates: "Mar 2024 - Jun 2024",
+      date: "2024-06-01",
       active: true,
+      featured: true,
       description:
         "A short description of what this project does and why you built it. You can include [links](https://example.com) in markdown.",
-      technologies: ["Next.js", "TypeScript", "TailwindCSS", "PostgreSQL"],
+      technologies: ["React", "Node.js", "Redis", "Docker"],
       links: [
         {
           type: "Website",
-          href: "https://project-one.com",
+          href: "https://project-two.com",
           icon: Icons.globe,
         },
         {
           type: "Source",
-          href: "https://github.com/your-username/project-one",
+          href: "https://github.com/your-username/project-two",
           icon: Icons.github,
         },
       ],
-      video:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/chat-collect.mp4",
+      content: `## The idea
+
+Boutique To Box turns small retail stock into curated subscription boxes. Store owners list inventory, and the platform packs monthly surprise boxes based on customer preferences.
+
+## Highlights
+
+- Preference quiz with 12 dimensions feeding a recommendation engine
+- Real-time inventory syncing with Shopify and Square
+- Subscription billing with prorated upgrades
+
+## Stack
+
+**React** + **Node.js** with **Redis** for session and queueing, containerized with **Docker**.`,
     },
     {
-      title: "Project One",
-      href: "https://project-one.com",
-      dates: "Jan 2024 - Feb 2024",
+      slug: "ossium",
+      title: "Ossium",
+      href: "https://project-three.com",
+      dates: "Jul 2024 - Present",
+      date: "2024-07-01",
       active: true,
       description:
         "A short description of what this project does and why you built it. You can include [links](https://example.com) in markdown.",
-      technologies: ["Next.js", "TypeScript", "TailwindCSS", "PostgreSQL"],
+      technologies: ["SvelteKit", "PostgreSQL", "Cloudflare"],
       links: [
         {
           type: "Website",
-          href: "https://project-one.com",
+          href: "https://project-three.com",
           icon: Icons.globe,
         },
         {
           type: "Source",
-          href: "https://github.com/your-username/project-one",
+          href: "https://github.com/your-username/project-three",
           icon: Icons.github,
         },
       ],
-      video:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/chat-collect.mp4",
+      content: `## The idea
+
+Ossium is a lightweight publishing platform for personal sites. Content is plain markdown in a git repo; the platform handles rendering, SEO, analytics, and deploy.
+
+## Why
+
+Most blogging platforms over-serve: too much chrome, too many knobs. Ossium keeps the writing surface minimal and the delivery pipeline fast.
+
+## Stack
+
+**SvelteKit** for rendering, **PostgreSQL** for structured data, and **Cloudflare** at the edge.`,
     },
   ],
   contributions: [

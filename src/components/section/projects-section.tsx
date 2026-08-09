@@ -5,7 +5,10 @@ import { DATA } from "@/data/resume";
 const BLUR_FADE_DELAY = 0.04;
 
 export default function ProjectsSection({ limit }: { limit?: number }) {
-  const projects = limit ? DATA.projects.slice(0, limit) : DATA.projects;
+  const projects = (limit
+    ? DATA.projects.filter((p) => p.featured).slice(0, limit)
+    : DATA.projects
+  ).filter((p) => p.active);
 
   return (
     <section id="projects">
@@ -22,7 +25,7 @@ export default function ProjectsSection({ limit }: { limit?: number }) {
           </div>
           <div className="flex flex-col gap-y-3 items-center justify-center">
             <h2 className="font-heading text-3xl font-bold tracking-tighter sm:text-4xl">
-              Check out my latest work
+              Featured Projects
             </h2>
             <p className="text-muted-foreground md:text-lg/relaxed lg:text-base/relaxed xl:text-lg/relaxed text-balance text-center">
               I&apos;ve worked on a variety of projects, from simple websites
@@ -33,7 +36,7 @@ export default function ProjectsSection({ limit }: { limit?: number }) {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 max-w-[800px] mx-auto auto-rows-fr">
           {projects.map((project, id) => (
             <BlurFade
-              key={`${project.title}-${id}`}
+              key={`${project.slug}-${id}`}
               delay={BLUR_FADE_DELAY * 12 + id * 0.05}
               className="h-full"
             >
