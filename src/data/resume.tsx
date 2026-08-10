@@ -1,10 +1,24 @@
 import { Icons, type IconProps } from "@/components/icons";
 import {
-  CameraIcon,
   HomeIcon,
   NotebookIcon,
   type LucideIcon,
 } from "lucide-react";
+import {
+  SiDocker,
+  SiGit,
+  SiGo,
+  SiKubernetes,
+  SiNextdotjs,
+  SiNodedotjs,
+  SiOpenjdk,
+  SiPostgresql,
+  SiPrisma,
+  SiPython,
+  SiReact,
+  SiTailwindcss,
+  SiTypescript,
+} from "react-icons/si";
 
 export type IconComponent = (props: IconProps) => React.ReactNode;
 
@@ -30,6 +44,7 @@ export interface WorkExperience {
   location: string;
   title: string;
   logoUrl: string;
+  image?: string;
   start: string;
   end: string | null;
   description: string;
@@ -62,29 +77,6 @@ export interface TweetItem {
   id: string;
 }
 
-export interface ProjectLink {
-  type: string;
-  href: string;
-  icon: IconComponent;
-}
-
-export interface Project {
-  slug: string;
-  title: string;
-  href: string;
-  dates: string;
-  date: string;
-  active: boolean;
-  featured?: boolean;
-  description: string;
-  technologies: string[];
-  links: ProjectLink[];
-  image?: string;
-  imageAlt?: string;
-  video?: string;
-  content?: string;
-}
-
 export interface NavItem {
   href: string;
   icon: LucideIcon;
@@ -112,81 +104,45 @@ export interface Data {
   tweets: TweetItem[];
   work: WorkExperience[];
   education: Education[];
-  projects: Project[];
   contributions: Contribution[];
 }
-
-const si = {
-  typescript: "M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.555 3.555 0 0 1-1.012 1.085 4.363 4.363 0 0 1-1.487.596c-.551.126-1.09.19-1.617.19-.583 0-1.143-.056-1.681-.168a5.875 5.875 0 0 1-1.453-.5v-2.626c.243.163.557.313.941.448.385.135.8.252 1.245.353.444.1.887.15 1.328.15.321 0 .616-.026.883-.078a1.88 1.88 0 0 0 .66-.24c.18-.107.321-.239.421-.396a1.01 1.01 0 0 0 .15-.556c0-.202-.043-.381-.13-.538a1.291 1.291 0 0 0-.413-.418 3.868 3.868 0 0 0-.69-.39 8.567 8.567 0 0 0-.977-.406c-.469-.183-.914-.394-1.336-.633a4.558 4.558 0 0 1-1.095-.769c-.315-.3-.567-.65-.757-1.053a3.45 3.45 0 0 1-.281-1.441c0-.658.126-1.226.376-1.705a3.484 3.484 0 0 1 1.014-1.189 4.493 4.493 0 0 1 1.487-.707 6.012 6.012 0 0 1 1.76-.23zm-9.33.184h4.473v2.036h-2.236v9.413H7.392V11.97H5.157z",
-  react:
-    "M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588 1.015 6.38.289.174.636.26 1.046.26 1.346 0 3.107-.96 4.888-2.624 1.78 1.664 3.542 2.616 4.887 2.616.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.261.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-1.015-6.38-.289-.178-.636-.274-1.046-.274zm-.005 1.44c.508 0 .848.21 1.03.56.452 1.34-.027 4.016-2.232 6.779-1.18-1.375-2.504-2.634-3.935-3.723 1.59-2.068 3.626-3.616 5.137-3.616zM9.17 8.405c1.435.867 2.792 2.084 4.088 3.61-1.296 1.527-2.653 2.744-4.088 3.611-1.43-.867-2.787-2.084-4.083-3.61 1.296-1.527 2.653-2.744 4.083-3.611zm8.633 2.352c2.205 2.763 2.684 5.438 2.232 6.779-.182.35-.522.56-1.03.56-1.512 0-3.547-1.548-5.137-3.616 1.431-1.09 2.755-2.348 3.935-3.723zm-9.62 0c1.18 1.375 2.504 2.634 3.935 3.723-1.59 2.068-3.625 3.616-5.136 3.616-.508 0-.849-.21-1.031-.56-.451-1.34.027-4.016 2.232-6.779zM9.17 15.597c1.435.867 2.792 2.085 4.088 3.61-1.296 1.527-2.653 2.744-4.088 3.611-1.43-.867-2.787-2.084-4.083-3.61 1.296-1.527 2.653-2.744 4.083-3.611zm11.355 2.044c.704 3.113.39 5.588-1.015 6.38-.323.187-.696.278-1.106.278-1.512 0-3.547-1.548-5.137-3.616 1.431-1.09 2.755-2.348 3.935-3.724 2.206 2.763 2.685 5.439 2.232 6.78.001.001-.012.002-.026.002z",
-  nextjs:
-    "M18.665 21.978C16.758 23.255 14.465 24 12 24 5.377 24 0 18.623 0 12S5.377 0 12 0s12 5.377 12 12c0 3.583-1.574 6.801-4.067 8.972L10.021 7.5v8.167h2.553l4.583 6.311z",
-  nodejs:
-    "M11.998,24c-0.321,0-0.641-0.084-0.922-0.247l-2.936-1.737c-0.438-0.245-0.224-0.332-0.08-0.383 c0.585-0.203,0.703-0.25,1.328-0.604c0.065-0.037,0.151-0.023,0.218,0.017l2.256,1.339c0.082,0.045,0.197,0.045,0.272,0l8.795-5.076 c0.082-0.047,0.134-0.141,0.134-0.238V6.921c0-0.099-0.053-0.192-0.137-0.242l-8.791-5.072c-0.081-0.047-0.189-0.047-0.271,0 L3.075,6.68C2.99,6.729,2.936,6.825,2.936,6.921v10.15c0,0.097,0.054,0.189,0.139,0.235l2.409,1.392 c1.307,0.654,2.108-0.116,2.108-0.89V7.787c0-0.142,0.114-0.253,0.256-0.253h1.115c0.139,0,0.255,0.112,0.255,0.253v10.021 c0,1.745-0.95,2.745-2.604,2.745c-0.508,0-0.909,0-2.026-0.55L2.28,18.675c-0.57-0.329-0.922-0.945-0.922-1.604V6.921 c0-0.659,0.353-1.275,0.922-1.603l8.795-5.082c0.557-0.315,1.296-0.315,1.848,0l8.794,5.082c0.57,0.329,0.924,0.944,0.924,1.603 v10.15c0,0.659-0.354,1.273-0.924,1.604l-8.794,5.078C12.643,23.916,12.324,24,11.998,24zM19.099,13.993 c0-1.9-1.284-2.406-3.987-2.763c-2.731-0.361-3.009-0.548-3.009-1.187c0-0.528,0.235-1.233,2.258-1.233 c1.807,0,2.473,0.389,2.747,1.607c0.024,0.115,0.129,0.199,0.247,0.199h1.141c0.071,0,0.138-0.031,0.186-0.081 c0.048-0.054,0.074-0.123,0.067-0.196c-0.177-2.098-1.571-3.076-4.388-3.076c-2.508,0-4.248,1.085-4.248,2.881 c0,1.845,1.488,2.396,3.868,2.651c2.724,0.289,3.138,0.677,3.138,1.316c0,0.541-0.313,1.316-2.642,1.316 c-1.908,0-2.695-0.477-2.998-1.432c-0.027-0.081-0.103-0.137-0.19-0.137h-1.153c-0.071,0-0.138,0.031-0.186,0.082 c-0.047,0.05-0.071,0.118-0.067,0.19c0.195,2.149,1.394,3.213,4.594,3.213c2.593,0,4.575-1.098,4.575-3.13z",
-  python:
-    "M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.33-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.26.36.36.35.46.33.59.28.73.21.88.14 1.05.05 1.23-.06 1.22-.16 1.04-.24.87-.32.71-.36.57-.4.44-.42.33-.42.24-.4.16-.36.1-.32.05-.24.01h-.16l-.06-.01h-8.16v.83h3.51l.01 2.75.02.37-.05.34-.11.31-.17.28-.25.26-.31.23-.38.2-.44.18-.51.15-.58.12-.64.1-.71.06-.77.04-.84-.02-1.27-.05h-4.51l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06h-1.58l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.33-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01.16-.01.06h8.66l.69-.05.59-.14.5-.22.41-.27.33-.32.27-.35.2-.36.15-.37.1-.35.07-.32.04-.27.02-.21V9.37h1.75zm-6.78 9.65l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09z",
-  golang:
-    "M1.25 3.781h1.184l.937 3.81c.045.206.112.564.198 1.077h.023c.065-.464.128-.828.187-1.091l.925-3.796h1.114l.925 3.81c.045.187.104.531.176 1.031h.021c.055-.405.125-.789.211-1.153l1.026-3.688h1.082l-1.596 5.395H7.515l-.947-3.8c-.067-.276-.113-.528-.137-.758h-.025c-.045.249-.096.527-.152.834l-.958 3.724h-1.13L2.99 4.439c-.055-.216-.111-.444-.169-.682h-.022c-.023.15-.056.385-.099.706l-.853 3.713H.584zm7.73 0h1.069v.996h.023c.254-.393.577-.676.968-.85.391-.174.782-.261 1.174-.261.444 0 .816.074 1.117.223.301.149.534.346.699.591.165.246.284.494.356.745.071.25.107.449.107.597h-.088c.061-.344.104-.654.129-.932a5.637 5.637 0 0 1 .101-.812h1.302v5.395h-1.107v-3.31c0-.368-.061-.66-.185-.874-.123-.214-.284-.355-.485-.422-.2-.068-.428-.102-.682-.102-.309 0-.604.076-.886.227-.281.151-.478.369-.59.653-.113.284-.169.622-.169 1.013v2.815H8.98zm11.665.777v-.777h1.107v5.395h-1.107v-.736h-.022a1.88 1.88 0 0 1-.371.52 2.348 2.348 0 0 1-.568.41c-.217.121-.455.182-.712.182a2.04 2.04 0 0 1-1.09-.303c-.325-.202-.573-.478-.745-.83-.171-.351-.257-.772-.257-1.264 0-.46.083-.867.25-1.22a2.174 2.174 0 0 1 .692-.849c.297-.216.63-.324 1.001-.324.257 0 .495.058.713.173.218.115.406.279.563.493h.023V4.558zm-3.134 5.47c0 .373.07.688.21.948.14.26.32.454.54.584.22.13.444.194.672.194.283 0 .544-.074.781-.222.238-.149.418-.365.54-.65.123-.284.184-.624.184-1.019 0-.365-.061-.679-.184-.941a1.423 1.423 0 0 0-.521-.61 1.318 1.318 0 0 0-.75-.217c-.257 0-.495.074-.712.222-.218.149-.394.369-.529.66-.135.291-.202.621-.202.989z",
-  postgresql:
-    "M4.171 23.712c-.508 0-.684-.335-.673-.729l.005-1.003h-.369c-.531 0-.704-.277-.704-.735v-5.56c0-.406.333-.738.738-.738h5.13v-3.945H3.117c-.406 0-.738-.333-.738-.738V5.09c0-.405.332-.738.738-.738h1.35V3.06c0-.406.332-.738.738-.738s.738.332.738.738v1.293h2.858V3.06c0-.406.332-.738.738-.738s.738.332.738.738v1.293h1.352c.406 0 .738.333.738.738v4.175c0 .405-.332.738-.738.738H9.525v3.945h5.129c.406 0 .738.332.738.738v5.56c0 .458-.173.735-.704.735h-.369l.006 1.003c.012.394-.164.729-.672.729-.494 0-.582-.335-.594-.729l-.006-1.003h-4.302l-.006 1.003c-.012.394-.099.729-.593.729zm.955-7.747h4.57v-4.57h-4.57zm10.951-4.57h.965c1.355-.007 2.083-.486 2.083-1.451 0-.741-.493-1.163-1.397-1.245l-1.651.002zm.926-1.772v-2.163c.333-.012.672-.032 1.016-.032.983 0 1.475-.286 1.475-.891 0-.516-.394-.83-1.134-.83-.478 0-.927.134-1.345.394l-.012-1.036c1.014-.577 2.125-.839 3.121-.839 1.627 0 2.571.899 2.571 2.192 0 1.106-.648 1.915-1.716 2.231v.022c1.323.155 2.169 1.031 2.169 2.277 0 1.752-1.398 2.752-3.477 2.752-.91 0-1.837-.148-2.668-.398v-3.69z",
-  docker:
-    "M13.983 11.078h2.119a.186.186 0 0 0 .186-.185V9.006a.186.186 0 0 0-.186-.186h-2.119a.185.185 0 0 0-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 0 0 .186-.186V3.574a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 0 0 .186-.186V6.29a.186.186 0 0 0-.186-.185h-2.118a.185.185 0 0 0-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 0 0 .184-.186V6.29a.185.185 0 0 0-.185-.185H8.1a.185.185 0 0 0-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.185.185 0 0 0 .185-.186V6.29a.185.185 0 0 0-.185-.185H5.119a.186.186 0 0 0-.186.185v1.887c0 .102.084.185.186.186m0-2.716h2.119a.186.186 0 0 0 .185-.185V3.574a.186.186 0 0 0-.185-.185H5.119a.186.186 0 0 0-.186.185v1.888c0 .102.084.185.186.185m-2.964 0H4.273a.186.186 0 0 0 .186-.185V3.574a.185.185 0 0 0-.185-.185H2.155a.186.186 0 0 0-.185.185v1.888c0 .102.083.185.185.185m18.683-.716c-.6.433-1.486.587-2.166.532-.186.44-.44.879-.786 1.25l.031.04c.581.664.98 1.467 1.151 2.304.186.932.149 1.915-.111 2.834a6.393 6.393 0 0 1-1.645 2.638c-.894.813-2.109 1.315-3.604 1.588-.97.176-1.99.135-2.949-.123-.813.768-1.982.835-2.881.284-.648-.397-1.011-.969-1.171-1.692-.186-.837-.062-1.667.305-2.447a8.8 8.8 0 0 1-.369-.804 6.8 6.8 0 0 1-.349-1.456 6.3 6.3 0 0 1-.01-1.033c.025-.222.061-.442.107-.661H4.45v4.668c0 .214.148.403.358.457.092.023.186-.04.208-.13.024-.091-.04-.186-.13-.208a.35.35 0 0 1-.046-.013c-.116-.048-.165-.16-.162-.283V8.563c-.403.043-.777.172-1.045.443a.495.495 0 0 0-.142.298l-.007.089v2.037c.002.117.032.232.089.334.137.242.34.432.583.555a.39.39 0 0 1 .207.362v1.368c0 .168.131.29.3.29.166-.01.29-.145.287-.312l-.002-1.343c0-.017.002-.035.004-.052a.418.418 0 0 0-.144-.26.942.942 0 0 1-.429-.705 1.21 1.21 0 0 1-.021-.326c.01-.246.118-.487.29-.654.198-.19.439-.33.693-.374v-.159h8.123c.232 0 .412-.169.432-.398a.366.366 0 0 0 0-.039c-.005-.331-.024-.66-.07-.983a5.835 5.835 0 0 0-.678-2.127 5.916 5.916 0 0 0-1.236-1.522c-.193-.149-.335-.31-.487-.471-.061-.064-.131-.119-.196-.181-.222-.209-.45-.41-.681-.606-.132-.112-.27-.216-.401-.329-.27-.232-.531-.474-.795-.714a.517.517 0 0 0-.253-.11.574.574 0 0 0-.305.053 4.505 4.505 0 0 0-1.125.72c-.167.144-.326.297-.482.452a.186.186 0 0 1-.06.045.497.497 0 0 0-.21.195l.025.002.144.137c.202.203.403.406.603.61.311.317.62.636.945.938.218.203.45.39.687.57.12.092.247.174.378.25.226.131.457.249.692.359.067.031.136.054.206.077l.154-.232z",
-  kubernetes:
-    "M12.001 0a1.202 1.202 0 0 0-.86.364L2.511 9.022a1.207 1.207 0 0 0-.315.91l1.512 10.653c.054.386.348.695.73.769l8.537 2.29c.132.035.268.035.399 0l8.54-2.29a1.208 1.208 0 0 0 .73-.769l1.512-10.653c.02-.155-.028-.312-.136-.433a1.198 1.198 0 0 0-.18-.477L12.86.364A1.202 1.202 0 0 0 12 0zm.005 2.714l3.133 4.94a7.42 7.42 0 0 1 .92.057l-4.045-5.008zm.008 0v5.101l-2.46-5.05h.03zm-.398.064L7.596 7.78a7.42 7.42 0 0 1 .69-.94l3.33-4.062zm4.222 4.168a7.369 7.369 0 0 1 1.477 1.342h-6.63a7.36 7.36 0 0 1 1.83-.808l2.08-4.546c.047.004.092.012.14.012.437 0 .855.18 1.103-.024zm-6.133.034a7.36 7.36 0 0 1 1.955.879l-1.494 1.694c-.33-.08-.66-.14-1.01-.164zm5.155 1.652h2.92a7.322 7.322 0 0 1-.994 2.84l-1.366-2.63.011-.004zm-1.248.029l1.525 2.934a7.31 7.31 0 0 1-1.06.26l-1.174-2.86c.297-.108.504-.22.709-.334zm-2.738.114c.24.058.486.13.71.211l-1.149 2.792a7.31 7.31 0 0 1-.907-.374zm5.611 1.131l2.596.088a7.322 7.322 0 0 1 .151 1.55 7.31 7.31 0 0 1-1.51 1.55l-1.15-2.88-.087-.308zm-4.168.58l1.024 2.494c-.423.243-.865.32-1.318.39zm3.083.016l.668 1.67c-.06.048-.108.1-.156.162-.635.807-1.585 1.403-2.977 1.728-.636.148-1.31.197-2.014.135l1.1-1.978a5.1 5.1 0 0 0 .657.052c.34 0 .69-.034 1.057-.105l-.043-.128.077.016a4.91 4.91 0 0 0 1.07-.115c.63-.15 1.15-.38 1.558-.672zm-.092 2.7l2.058 1.574c-.033.013-.07.026-.104.039-1.614.6-3.366.902-5.235.902-.02 0-.04-.012-.06-.013l1.644-1.96c.16.036.315.058.47.077a5.69 5.69 0 0 0 1.227-.019zm2.344 1.868l2.774 1.278a7.28 7.28 0 0 1-.648.831l-2.276-1.816a5.15 5.15 0 0 0 .15-.293zm-5.184.074l.058.197c.179.608.33 1.24.454 1.902l-2.27-1.698a5.14 5.14 0 0 0 1.758-.4zm4.453.403l2.141 1.71a7.322 7.322 0 0 1-1.132.712l-1.078-2.297-.017-.025zm-3.783.61c-.155.519-.278 1.068-.378 1.628l-2.42-1.188a7.32 7.32 0 0 1 .92-.99l1.878 1.55zm3.145.585l.984 2.1a7.32 7.32 0 0 1-1.133.168l-.46-2.34zm-3.593.084l.343 1.747-1.203-1.567a7.3 7.3 0 0 1 .86-.18zm1.11 2.003l.404 2.058a7.33 7.33 0 0 1-1.357-.654l.47-1.622c.08-.003.17-.004.256 0zm-1.04.654l-.88 1.056-1.132-.864c.451-.274.913-.514 1.404-.707l.608.515zm4.13 1.151l.64 1.053a7.32 7.32 0 0 1-1.26.22l.11-1.353zm-2.688.562l-.069.843.009.167a7.31 7.31 0 0 1-1.06-.907l.285-.546c.05-.004.095-.008.145-.008a7.25 7.25 0 0 1 .69.451z",
-  java:
-    "M8.851 18.56s-.917.534.654.714c1.902.218 2.874.187 4.969-.211 0 0 .551.346 1.321.646-4.699 2.013-10.633-.117-6.944-1.149M8.276 15.933s-1.028.761.542.924c2.032.209 3.636.227 6.413-.308 0 0 .383.389.985.602-5.679 1.661-12.84.132-7.94-1.218M13.116 11.475c1.158 1.333-.304 2.533-.304 2.533s2.939-1.518 1.589-3.418c-1.261-1.772-2.228-2.652 3.007-5.688 0-.001-8.216 2.051-4.292 6.573M19.33 20.504s.679.559-.747.991c-2.712.82-11.288 1.069-13.669.033-.856-.373.75-.89 1.254-1 .629-.166.989-.135.989-.135-1.139-.802-7.362 1.575-3.159 2.257 11.454 1.852 20.865-.833 17.332-2.146M12.169 13.757c.521.587-.457 1.115-.457 1.115s1.324-.687.716-1.546c-.554-.783-.979-1.238-1.26-1.503-.011-.011-1.635-1.214-2.413-1.676-.099-.058-.18-.099-.246-.135.853-.924 3.26-2.672 3.369-3.214 0 0-2.944 1.676-3.822 2.202-.876.526-1.34.904-1.947 1.425.093.062.172.12.28.204.924.713 2.783 1.66 2.966 1.83.185.173.266.374.184.585-.084.211-.562.548-.778.574-.027.004-.323.142-.674.265 1.022.336 2.035.528 2.964-.139 1.042-.746.667-1.768.333-2.134-.027.014-.051.027-.075.043zM13.154 3.062c2.003-2.511 5.246-.635 5.246-.635-2.44 5.053-5.511 4.925-6.524 4.842-.263-.022-1.553.072-2.391.495 0 0 1.141-1.375 3.669-4.702",
-  tailwind:
-    "M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C15.694 6.93 14.333 5.549 12.001 5.549m0 7.2c-.009.004-.03.008-.083.114-.067.147-.16.349-.244.53-.022.048-.176.375-.07.623.198.46.677.844 1.455 1.23.494.246 1.16.498 2.18.756 1.34.339 2.435.588 3.01 1.116.263.243.49.548.597 1.067.105.51.046.997-.29 1.6-.227.404-.542.737-.907 1.008-.709.526-1.602.866-2.656 1.012-.584.082-1.09.127-1.526.127-1.016.001-1.778-.21-2.368-.655-.23-.174-.406-.364-.53-.547l-.091-.134.256-1.422-.02.014c-.112.081-.24.155-.386.218-.461.202-.998.283-1.574.283-.56 0-1.134-.063-1.706-.188-.673-.147-1.242-.43-1.695-.843-.163-.15-.34-.332-.511-.533l-.065-.077.125-1.236-.012-.012-.244.228c-.115.107-.251.214-.41.3-.458.25-1.008.387-1.62.387-.524 0-1.012-.089-1.45-.264-.674-.268-1.095-.706-1.296-1.35l-.05-.158.137-1.193.23-.116c.173-.071.372-.148.597-.229.522-.188 1.157-.322 1.873-.396l.185-.015.214.186.043.134c.105-.08.216-.158.334-.23.57-.349 1.286-.557 2.168-.63l.156-.013.146.14.043.158c.17-.033.346-.06.527-.079.55-.055 1.108-.017 1.67.112.556.128 1.057.332 1.524.624l-.268 1.501c.007.004.014.01.024.014.17-.003.315-.004.447-.004.77 0 1.338.18 1.78.51l.052.05z",
-  prisma:
-    "M21.8068 18.2848L13.5528.7565c-.207-.4382-.639-.7273-1.1286-.7541-.5023-.0293-.9523.213-1.2062.6523L2.266 15.1274c-.2773.4518-.2876 1.0215-.0264 1.4829l4.5366 7.8484c.2523.4366.7648.6676 1.2763.5736l13.2158-2.4756c.5096-.0927.9141-.4487 1.0397-.9343.0333-.1728.0292-.3512-.0068-.5235-.036-.1728-.1019-.3358-.1948-.478l-.2995-.3341zm-2.6186 2.8947l-10.538 1.974c-.1692.0344-.3046-.0852-.2998-.2524.0034-.1435.1313-.2433.2702-.2631l5.9756-.8944c.3832-.0598.6526-.3876.6681-.7751.0159-.3912-.2214-.7367-.6041-.8551l-8.0386-2.3294c-.2117-.0613-.3373-.2792-.2939-.5053.0435-.2261.2348-.3882.4626-.3943l10.437-.2802c.2144-.0059.405.1379.4305.3517.0302.2271-.0912.4312-.2829.5166l-4.8636 2.1633c-.1261.0561-.1996.1946-.1725.326.0271.1312.1435.2306.2746.2337l7.5523.4678c.2385.0148.4383.1812.4769.4174.0435.2627-.1201.4918-.3788.5607zM20.8631 9.9459l-10.3523-9.2115c-.2303-.2049-.5851-.1779-.7816.0563-.1973.2356-.1747.5912.0518.7852l10.2351 8.7752c.2608.2238.6446.1863.8583-.0839.2123-.2684.1704-.6574-.1079-.8618z",
-  git: "M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.6-.401-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187",
-};
-
-const icon = (d: string): IconComponent =>
-  function BrandIcon(props: IconProps) {
-    return (
-      <svg role="img" viewBox="0 0 24 24" fill="currentColor" {...props}>
-        <path d={d} />
-      </svg>
-    );
-  };
 
 export const DATA: Data = {
   name: "Siddhartha Kunwar",
   initials: "SK",
   url: "https://x0lg0n.tech",
   location: "Delhi, India",
-  locationLink: "https://www.google.com/maps/place/india",
-  coordinates: "28.6139° N, 77.2090° E",
+  locationLink:
+    "https://www.google.com/maps/place/Connaught+Place,+New+Delhi,+Delhi+110001,+India/@28.6289016,77.2049872,15z/data=!3m1!4b1!4m6!3m5!1s0x390cfd37b741d057:0xcdee88e47393c3f1!8m2!3d28.6304203!4d77.2177216!16zL20vMDR4eDB4?entry=ttu&g_ep=EgoyMDI2MDgwNS4xIKXMDSoASAFQAw%3D%3D",
+  coordinates: "28.6289016° N, 77.2049872° E",
   githubUsername: "x0lg0n",
   description:
     "Software Engineer. I build things for the web and love turning ideas into products.",
   building: {
     name: "Orka",
-    href: "https://example.com",
+    href: "https://orkahq.vercel.app/",
     description:
-      "A short description of what Orka is — what problem it solves and who it's for. Edit this in src/data/resume.tsx.",
+      "The AI-powered financial operating system for freelancers, agencies, and service businesses, powered by Stellar — ship invoices, track payments, and get AI-driven financial insights from one dashboard.",
   },
   summary:
-    "I'm currently working as a [Software Engineer @ RiseIn](https://risein.com), building full-stack web applications with React, Next.js and TypeScript. Along the way I [pursued a double degree in computer science and business](/#education), [competed in over 21 hackathons](/#projects) and interned at big tech companies in Silicon Valley. Seeing code I wrote actually help people at scale is what keeps me building. Currently exploring Go and system design. Feel free to [shoot me an email](mailto:kumarsiddharthakain@gmail.com) if you'd like to chat!",
+    "Currently leading frontend and product work on [Orka](https://orkahq.vercel.app/) — an AI-powered financial operating system for freelancers and agencies on [Stellar](https://stellar.org/) ([Genesis-360](https://github.com/Genesis-360)). I also contribute to [Oreenza](https://oreenza.com/), shipping high-performance client websites for real businesses.\n I’ve built payment routers, zero-knowledge apps, real-time systems, and full-stack platforms. Open-source contributor ([GSSoC 2024,2025 & 2026](https://gssoc.girlscript.org/)), build-in-public developer, and currently exploring system design & Blockchain Developement — check out my [projects](/work), [blog](/blog) and [resume](/resume) to see what I've been shipping. Feel free to [shoot me an email](mailto:kumarsiddharthakain@gmail.com) if you'd like to chat!",
   avatarUrl: "/me.jpg",
   avatarGifUrl: "",
   qrCodeUrl: "/qr-code.png",
   skills: [
-    { name: "React", icon: icon(si.react) },
-    { name: "Next.js", icon: icon(si.nextjs) },
-    { name: "TypeScript", icon: icon(si.typescript) },
-    { name: "Node.js", icon: icon(si.nodejs) },
-    { name: "Python", icon: icon(si.python) },
-    { name: "Go", icon: icon(si.golang) },
-    { name: "Postgres", icon: icon(si.postgresql) },
-    { name: "Docker", icon: icon(si.docker) },
-    { name: "Kubernetes", icon: icon(si.kubernetes) },
-    { name: "Java", icon: icon(si.java) },
-    { name: "Tailwind CSS", icon: icon(si.tailwind) },
-    { name: "Prisma", icon: icon(si.prisma) },
-    { name: "Git", icon: icon(si.git) },
+    { name: "React", icon: SiReact },
+    { name: "Next.js", icon: SiNextdotjs },
+    { name: "TypeScript", icon: SiTypescript },
+    { name: "Node.js", icon: SiNodedotjs },
+    { name: "Python", icon: SiPython },
+    { name: "Go", icon: SiGo },
+    { name: "Postgres", icon: SiPostgresql },
+    { name: "Docker", icon: SiDocker },
+    { name: "Kubernetes", icon: SiKubernetes },
+    { name: "Java", icon: SiOpenjdk },
+    { name: "Tailwind CSS", icon: SiTailwindcss },
+    { name: "Prisma", icon: SiPrisma },
+    { name: "Git", icon: SiGit },
   ],
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
@@ -222,74 +178,100 @@ export const DATA: Data = {
         icon: Icons.youtube,
         navbar: false,
       },
-      email: {
-        name: "Send Email",
-        url: "#",
-        icon: Icons.email,
-        navbar: false,
-      },
     },
   },
   work: [
     {
       company: "RiseIn",
       href: "https://risein.com",
-      badges: [],
+      badges: [
+        "React",
+        "Next.js",
+        "TypeScript",
+        "Stellar SDK",
+        "PostgreSQL",
+        "Midnight SDK",
+        "Tailwind CSS",
+        "Wallets",
+        "Sroban",
+      ],
       location: "Remote",
-      title: "Software Engineer",
-      logoUrl: "",
+      title: "Software Developer - Stellar & Midnight Programs",
+      logoUrl: "/images/logos/risein.png",
       start: "Jan 2026",
       end: "Present",
       description:
-        "Describe your role and impact here. What did you build, what were the results? Keep it to 2-4 sentences.",
+        "Built and shipped multiple full-stack products including [Orka](https://orkahq.vercel.app/) (AI Financial OS with 100+ real users), [RemitFlow](https://rmtflow.vercel.app/), and [Wrangler](https://wrangler-midnight.vercel.app/). Owned end-to-end development — from backend architecture and APIs to frontend and product launch — during the [Stellar](https://stellar.org/) Journey to Mastery and [Midnight](https://midnight.network/) programs.",
     },
     {
       company: "Contra",
       href: "https://contra.com",
-      badges: [],
+      badges: ["React", "Next.js", "TypeScript", "Tailwind CSS", "REST APIs"],
       location: "Remote",
       title: "Freelance Developer",
-      logoUrl: "",
+      logoUrl: "/images/logos/contra.png",
       start: "Apr 2023",
       end: "Present",
       description:
-        "Describe your role and impact here. What did you build, what were the results? Keep it to 2-4 sentences.",
+        "Delivered web projects for clients including landing pages, dashboards, and full-stack applications. Focused on clean UI, performant frontend, and reliable backend implementations.",
     },
     {
       company: "Sen4a Recruiters",
-      href: "https://sen4a.com",
-      badges: [],
+      href: "https://www.sen4a-recruiters.com/",
+      badges: ["NestJS", "GraphQL", "PostgreSQL", "Microservices", "Docker"],
       location: "Remote | Tokyo, Japan",
       title: "Backend Developer Intern",
-      logoUrl: "",
+      logoUrl: "/images/logos/sen4a.jpg",
       start: "Mar 2025",
       end: "Jun 2025",
       description:
-        "Describe your role and impact here. What did you build, what were the results? Keep it to 2-4 sentences.",
+        "Designed and built scalable NestJS microservices and GraphQL APIs for a recruitment platform. Optimized complex queries and improved backend performance and reliability for production workflows.",
     },
     {
       company: "Ceeras",
       href: "https://ceeras.com",
-      badges: [],
+      badges: [
+        "Penetration Testing",
+        "OWASP",
+        "Burp Suite",
+        "Vulnerability Assessment",
+      ],
       location: "Remote | India",
       title: "Cyber Security Intern",
-      logoUrl: "",
-      start: "Fab 2025",
+      logoUrl: "/images/logos/ceeras.jpg",
+      start: "Feb 2025",
       end: "Jun 2025",
       description:
-        "Describe your role and impact here. What did you build, what were the results? Keep it to 2-4 sentences.",
+        "Conducted penetration testing and security assessments, prepared detailed vulnerability reports, and helped implement remediations for client systems.",
     },
     {
       company: "Edunet Foundation",
       href: "https://edunetfoundation.org",
-      badges: [],
+      badges: [
+        "Reconnaissance",
+        "Enumeration",
+        "Vulnerability Scanning",
+        "Kali Linux",
+      ],
       location: "Remote | India",
       title: "Cyber Security Intern",
-      logoUrl: "",
+      logoUrl: "/images/logos/edunet.jpg",
       start: "Jan 2025",
-      end: "Fab 2025",
+      end: "Feb 2025",
       description:
-        "Describe your role and impact here. What did you build, what were the results? Keep it to 2-4 sentences.",
+        "Gained hands-on experience in offensive security fundamentals including reconnaissance, enumeration, and vulnerability scanning through practical lab environments.",
+    },
+    {
+      company: "Asterics Compute",
+      href: "https://edunetfoundation.org",
+      badges: ["Node.js", "Microservices", "AWS", "Docker", "Load Balancing"],
+      location: "Remote | Arunachal Pradesh, India",
+      title: "Software Developer Intern",
+      logoUrl: "/images/logos/asterics.jpg",
+      start: "Nov 2024",
+      end: "Jan 2025",
+      description:
+        "Developed and maintained a containerized Node.js microservices architecture on AWS for a production ticketing system, improving reliability and reducing response times through load balancing and database optimization.",
     },
   ],
   education: [
@@ -299,151 +281,41 @@ export const DATA: Data = {
       degree: "Bachelor of Technology",
       branch: "Artificial Intelligence and Machine Learning",
       location: "Lucknow, India",
-      logoUrl: "./aktu.png",
+      logoUrl: "/images/logos/aktu.png",
       start: "2022",
       end: "2026",
       tags: ["AI/ML", "Deep Learning", "Python"],
     },
     {
       school: "Guru Harkrishan Public School",
-      href: "https://guruharkrishanpublicschool.edu.in/",
+      href: "https://ghpsloniroad.in/",
       degree: "Higher Secondary Education",
       branch: "Science Stream (PCM)",
       location: "Delhi, India",
-      logoUrl: "./guruharkrishan.png",
-      start: "2021",
-      end: "2019",
+      logoUrl: "/images/logos/ghps.jpg",
+      start: "2019",
+      end: "2021",
       tags: ["PCM", "Science"],
     },
     {
       school: "Guru Harkrishan Public School",
-      href: "https://guruharkrishanpublicschool.edu.in/",
+      href: "https://ghpsloniroad.in/",
       degree: "Secondary Education",
       branch: "Science Stream",
       location: "Delhi, India",
-      logoUrl: "./guruharkrishan.png",
+      logoUrl: "/images/logos/ghps.jpg",
       start: "2017",
       end: "2019",
     },
   ],
-  projects: [
-    {
-      slug: "chat-collect",
-      title: "Chat Collect",
-      href: "https://project-one.com",
-      dates: "Jan 2024 - Feb 2024",
-      date: "2024-02-01",
-      active: true,
-      featured: true,
-      description:
-        "A short description of what this project does and why you built it. You can include [links](https://example.com) in markdown.",
-      technologies: ["Next.js", "TypeScript", "TailwindCSS", "PostgreSQL"],
-      links: [
-        {
-          type: "Website",
-          href: "https://project-one.com",
-          icon: Icons.globe,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/your-username/project-one",
-          icon: Icons.github,
-        },
-      ],
-      video:
-        "https://pub-83c5db439b40468498f97946200806f7.r2.dev/chat-collect.mp4",
-      content: `## What it does
-
-Chat Collect lets you gather feedback from chat conversations in one place. It's built for teams that live in Slack, Discord, or Telegram and want their conversations to end up in a structured, searchable database.
-
-## How it works
-
-- **Ingestion** — a bot listens to channels you choose and streams new messages into the pipeline.
-- **Storage** — messages are normalized into a relational schema with full-text search.
-- **Reports** — an admin dashboard aggregates themes, sentiment, and volume over time.
-
-## Stack
-
-Built with **Next.js** and **TypeScript** on the frontend, a **PostgreSQL** database, and styled with **TailwindCSS**. Deployed on Vercel.`,
-    },
-    {
-      slug: "boutique-to-box",
-      title: "Boutique To Box",
-      href: "https://project-two.com",
-      dates: "Mar 2024 - Jun 2024",
-      date: "2024-06-01",
-      active: true,
-      featured: true,
-      description:
-        "A short description of what this project does and why you built it. You can include [links](https://example.com) in markdown.",
-      technologies: ["React", "Node.js", "Redis", "Docker"],
-      links: [
-        {
-          type: "Website",
-          href: "https://project-two.com",
-          icon: Icons.globe,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/your-username/project-two",
-          icon: Icons.github,
-        },
-      ],
-      content: `## The idea
-
-Boutique To Box turns small retail stock into curated subscription boxes. Store owners list inventory, and the platform packs monthly surprise boxes based on customer preferences.
-
-## Highlights
-
-- Preference quiz with 12 dimensions feeding a recommendation engine
-- Real-time inventory syncing with Shopify and Square
-- Subscription billing with prorated upgrades
-
-## Stack
-
-**React** + **Node.js** with **Redis** for session and queueing, containerized with **Docker**.`,
-    },
-    {
-      slug: "ossium",
-      title: "Ossium",
-      href: "https://project-three.com",
-      dates: "Jul 2024 - Present",
-      date: "2024-07-01",
-      active: true,
-      description:
-        "A short description of what this project does and why you built it. You can include [links](https://example.com) in markdown.",
-      technologies: ["SvelteKit", "PostgreSQL", "Cloudflare"],
-      links: [
-        {
-          type: "Website",
-          href: "https://project-three.com",
-          icon: Icons.globe,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/your-username/project-three",
-          icon: Icons.github,
-        },
-      ],
-      content: `## The idea
-
-Ossium is a lightweight publishing platform for personal sites. Content is plain markdown in a git repo; the platform handles rendering, SEO, analytics, and deploy.
-
-## Why
-
-Most blogging platforms over-serve: too much chrome, too many knobs. Ossium keeps the writing surface minimal and the delivery pipeline fast.
-
-## Stack
-
-**SvelteKit** for rendering, **PostgreSQL** for structured data, and **Cloudflare** at the edge.`,
-    },
-  ],
   contributions: [
-    { repo: "Genesis-360/Orka", number: 46 },
-    { repo: "Genesis-360/Orka", number: 45 },
-    { repo: "Genesis-360/Orka", number: 41 },
-    { repo: "warpdotdev/warp", number: 9195 },
-    { repo: "Genesis-360/Boutique-To-Box", number: 44 },
+    { repo: "Genesis-360/Orka", number: 37 }, // Project detail (Activity + Proposals + Timeline)
+    { repo: "Genesis-360/Orka", number: 40 }, // Design system + shell + onboarding + RLS
+    { repo: "Genesis-360/Orka", number: 41 }, // Blog
+    { repo: "Genesis-360/Orka", number: 46 }, // Dev landing
+    { repo: "Genesis-360/Orka", number: 45 }, // Documentation
+    { repo: "Genesis-360/Orka", number: 14 }, // Auth
+    { repo: "warpdotdev/warp", number: 9195 }, // Issue (not PR)
   ],
   testimonials: [
     {
@@ -465,8 +337,6 @@ Most blogging platforms over-serve: too much chrome, too many knobs. Ossium keep
         "Siddhartha is the rare developer who respects the design system. Pixel-perfect implementations, smooth animations, and zero context-switching friction.",
     },
   ],
-  // Add your tweet IDs here, e.g. { id: "1441032681968212480" }
-  // Find them in the tweet URL: https://x.com/x0lg0n/status/<THIS_IS_THE_ID>
   tweets: [
     {
       id: "2078530144629829949",
@@ -476,6 +346,9 @@ Most blogging platforms over-serve: too much chrome, too many knobs. Ossium keep
     },
     {
       id: "2032831202558607842",
+    },
+    {
+      id: "2075649352677388651",
     },
   ],
 };

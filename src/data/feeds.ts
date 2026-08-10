@@ -18,7 +18,7 @@ export const FEED_SOURCES: FeedSource[] = [
   {
     id: "hashnode",
     name: "Hashnode",
-    handle: "",
+    handle: "x0lg0n",
   },
   {
     id: "substack",
