@@ -438,3 +438,54 @@ html[data-magicui-theme-vt="active"]::view-transition-group(root) {
     }
   }
 }
+
+  --animate-marquee: marquee var(--duration) linear infinite;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+}
+
+/* Shiki code blocks (dual light/dark theme via CSS vars) */
+pre.shiki,
+pre.shiki span {
+  font-family: var(--font-geist-mono), ui-monospace, monospace !important;
+}
+
+.shiki,
+.shiki span {
+  background-color: var(--shiki-light-bg) !important;
+  color: var(--shiki-light) !important;
+  font-style: normal !important;
+}
+
+.dark .shiki,
+.dark .shiki span {
+  background-color: var(--shiki-dark-bg) !important;
+  color: var(--shiki-dark) !important;
+}
+
+.shiki code {
+  display: block;
+  padding: 1rem 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}

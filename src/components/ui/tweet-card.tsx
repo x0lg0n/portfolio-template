@@ -181,19 +181,27 @@ export const TweetMedia = ({ tweet }: { tweet: EnrichedTweet }) => {
   if (!tweet.video && !tweet.photos) return null;
   return (
       <div className="flex flex-1 items-center justify-center">
-      {tweet.video && (
-        <video
-          poster={tweet.video.poster}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="border-border rounded-xl border shadow-sm"
-        >
-          <source src={tweet.video.variants[0].src} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      )}
+      {tweet.video && (() => {
+        const mp4 =
+          tweet.video.variants.find((v) => v.type === "video/mp4") ??
+          tweet.video.variants[0];
+        return (
+          <video
+            poster={tweet.video.poster}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="border-border rounded-xl border shadow-sm"
+          >
+            <source
+              src={`/api/tweet-video?u=${encodeURIComponent(mp4.src)}`}
+              type="video/mp4"
+            />
+            Your browser does not support the video tag.
+          </video>
+        );
+      })()}
       {tweet.photos && (
         <div className="relative flex transform-gpu snap-x snap-mandatory gap-4 overflow-x-auto">
           <div className="shrink-0 snap-center sm:w-2" />
