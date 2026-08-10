@@ -5,6 +5,8 @@ export interface GalleryItem {
   location?: string;
   date?: string;
   camera?: string;
+  video?: string;
+  videoPoster?: string;
 }
 
 export const galleryItems: GalleryItem[] = [
@@ -15,6 +17,18 @@ export const galleryItems: GalleryItem[] = [
   //   caption: "Golden hour",
   //   location: "Himachal Pradesh",
   //   date: "2026-05-12",
+  //   camera: "iPhone 15 Pro",
+  // },
+  // Videos work too — just add a `video` field. Put the file in
+  // public/videos/ and use { src: "/images/gallery/preview.jpg", video: "/videos/clip.mp4" }.
+  // {
+  //   src: "/images/gallery/hackathon-poster.jpg",
+  //   video: "/videos/team-demo.mp4",
+  //   videoPoster: "/images/gallery/hackathon-poster.jpg",
+  //   alt: "Team demo at AceHack",
+  //   caption: "Live demo",
+  //   location: "Rajasthan, India",
+  //   date: "2024-01-15",
   //   camera: "iPhone 15 Pro",
   // },
   {

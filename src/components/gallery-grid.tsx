@@ -154,13 +154,29 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
             onClick={() => setLightboxIndex(index)}
             className="group mb-4 block w-full cursor-pointer break-inside-avoid overflow-hidden rounded-xl border border-border"
           >
-            <img
-              src={item.src}
-              alt={item.alt}
-              loading="lazy"
-              decoding="async"
-              className="block h-auto w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
+            {item.video ? (
+              <>
+                <video
+                  src={item.video}
+                  poster={item.videoPoster ?? item.src}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="block h-auto w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <span className="absolute right-2 top-2 z-10 rounded-full bg-black/60 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-white">
+                  ▶ video
+                </span>
+              </>
+            ) : (
+              <img
+                src={item.src}
+                alt={item.alt}
+                loading="lazy"
+                decoding="async"
+                className="block h-auto w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            )}
           </button>
         ))}
       </div>
@@ -191,11 +207,22 @@ export default function GalleryGrid({ items }: { items: GalleryItem[] }) {
             className="flex max-h-full flex-col items-center gap-3"
             onClick={(e) => e.stopPropagation()}
           >
+            {lightboxItem.video ? (
+            <video
+              src={lightboxItem.video}
+              poster={lightboxItem.videoPoster ?? lightboxItem.src}
+              controls
+              autoPlay
+              playsInline
+              className="max-h-[75vh] max-w-full rounded-lg object-contain"
+            />
+          ) : (
             <img
               src={lightboxItem.src}
               alt={lightboxItem.alt}
               className="max-h-[75vh] max-w-full rounded-lg object-contain"
             />
+          )}
             <figcaption className="flex flex-col items-center gap-1 text-center text-sm text-white/80">
               {lightboxItem.caption && (
                 <span className="font-medium text-white">
