@@ -84,6 +84,17 @@ export default function HeroSection() {
                 </TooltipContent>
               </Tooltip>
             </p>
+            <a
+              href="#contact"
+              className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 font-mono text-xs text-primary hover:bg-primary/20 transition-colors"
+              title="Open to new opportunities"
+            >
+              <span className="relative flex size-2" aria-hidden>
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-70" />
+                <span className="relative inline-flex size-2 rounded-full bg-primary" />
+              </span>
+              Available for work
+            </a>
             <div className="mt-1 flex flex-wrap items-center gap-2 font-mono text-sm text-muted-foreground">
               <Link
                 href={DATA.locationLink}

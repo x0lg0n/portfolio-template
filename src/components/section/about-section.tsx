@@ -1,6 +1,6 @@
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { DATA } from "@/data/resume";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import Link from "next/link";
 import Markdown from "react-markdown";
 
@@ -25,12 +25,23 @@ export default function AboutSection() {
       </BlurFade>
       <BlurFade delay={BLUR_FADE_DELAY * 5}>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2">
+          <Link
+            href="/resume"
+            className="text-muted-foreground inline-flex items-center gap-1.5 text-sm transition-colors duration-200 hover:text-link">
+            <FileText className="size-4" aria-hidden />
+            Resume
+          </Link>
+          <span
+            aria-hidden
+            className="text-muted-foreground text-xs opacity-40">
+            |
+          </span>
           {socials.map(([key, social]) => {
             const Icon = social.icon;
             const href =
-              social.name === "Send Email"
-                ? `mailto:${DATA.contact.email}`
-                : social.url;
+              social.name === "Send Email" ?
+                `mailto:${DATA.contact.email}`
+              : social.url;
             const external = href.startsWith("http");
             return (
               <span key={key} className="flex items-center gap-x-4">
@@ -38,12 +49,13 @@ export default function AboutSection() {
                   href={href}
                   target={external ? "_blank" : undefined}
                   rel={external ? "noopener noreferrer" : undefined}
-                  className="text-muted-foreground inline-flex items-center gap-1.5 text-sm transition-colors duration-200 hover:text-link"
-                >
+                  className="text-muted-foreground inline-flex items-center gap-1.5 text-sm transition-colors duration-200 hover:text-link">
                   <Icon className="size-4" aria-hidden />
                   {social.name}
                 </Link>
-                <span aria-hidden className="text-muted-foreground text-xs opacity-40">
+                <span
+                  aria-hidden
+                  className="text-muted-foreground text-xs opacity-40">
                   |
                 </span>
               </span>
@@ -51,8 +63,7 @@ export default function AboutSection() {
           })}
           <Link
             href={`mailto:${DATA.contact.email}`}
-            className="group text-muted-foreground inline-flex items-center gap-1 text-sm transition-colors duration-200 hover:text-link"
-          >
+            className="group text-muted-foreground inline-flex items-center gap-1 text-sm transition-colors duration-200 hover:text-link">
             <span>Email me</span>
             <ArrowRight
               className="size-4 transition-transform duration-200 group-hover:translate-x-0.5"
