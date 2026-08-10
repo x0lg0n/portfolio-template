@@ -21,6 +21,7 @@ const NAV_LINKS = [
   { label: "Work", href: "/work" },
   { label: "Projects", href: "/projects" },
   { label: "Blog", href: "/blog" },
+  { label: "Resume", href: "/resume" },
   { label: "Gallery", href: "/gallery" },
 ];
 
@@ -90,7 +91,35 @@ export default function PaletteSidebar() {
           </button>
         </div>
 
-        <div className="flex-shrink-0 border-b border-dashed border-border p-4">
+        <nav className="flex-1 overflow-y-auto p-4">
+          <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Navigate
+          </div>
+          <ul className="space-y-1" role="list">
+            {NAV_LINKS.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "block rounded-lg px-3 py-2 text-sm transition-colors",
+                      isActive
+                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                        : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+                    )}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="flex-shrink-0 border-t border-dashed border-border p-4">
           <div className="mb-2 flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <Palette className="size-3.5" aria-hidden />
@@ -128,7 +157,7 @@ export default function PaletteSidebar() {
           </div>
         </div>
 
-        <div className="flex-shrink-0 border-b border-dashed border-border p-4">
+        <div className="flex-shrink-0 border-t border-dashed border-border p-4">
           <div className="mb-2 flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <span
@@ -167,34 +196,6 @@ export default function PaletteSidebar() {
             })}
           </div>
         </div>
-
-        <nav className="flex-1 overflow-y-auto p-4">
-          <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Navigate
-          </div>
-          <ul className="space-y-1" role="list">
-            {NAV_LINKS.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className={cn(
-                      "block rounded-lg px-3 py-2 text-sm transition-colors",
-                      isActive
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                        : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
-                    )}
-                    aria-current={isActive ? "page" : undefined}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
 
         <div className="flex-shrink-0 border-t border-dashed border-border px-4 py-3 font-mono text-[11px] text-muted-foreground">
           press <span className="text-link">K</span> to toggle this menu
