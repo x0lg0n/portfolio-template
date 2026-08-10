@@ -1,5 +1,6 @@
 import { BlurFade } from "@/components/magicui/blur-fade";
 import Link from "next/link";
+import { ViewTransition } from "react";
 
 interface Crumb {
   label: string;
@@ -13,6 +14,7 @@ interface PageHeaderProps {
   title: string;
   count?: number;
   description?: string;
+  titleViewTransitionId?: string;
 }
 
 export function PageHeader({
@@ -22,6 +24,7 @@ export function PageHeader({
   title,
   count,
   description,
+  titleViewTransitionId,
 }: PageHeaderProps) {
   const breadcrumbs = crumbs ?? path?.map((segment, i, all) => ({
     label: segment,
@@ -30,6 +33,10 @@ export function PageHeader({
         ? undefined
         : `/${all.slice(0, i + 1).join("/")}`,
   }));
+
+  const titleWords = titleViewTransitionId
+    ? title.split(" ")
+    : [title];
 
   return (
     <section className="w-full py-20">
@@ -96,7 +103,24 @@ export function PageHeader({
               </p>
             ) : null}
             <h1 className="font-heading text-3xl font-bold tracking-tighter sm:text-4xl">
-              {title}
+              {titleWords.map((word, i) =>
+                titleViewTransitionId ? (
+                  <ViewTransition
+                    key={`${titleViewTransitionId}-${i}`}
+                    name={`post-${titleViewTransitionId}-w-${i}`}
+                  >
+                    <span className="whitespace-pre-wrap">
+                      {word}
+                      {i < titleWords.length - 1 ? " " : ""}
+                    </span>
+                  </ViewTransition>
+                ) : (
+                  <span key={i}>
+                    {word}
+                    {i < titleWords.length - 1 ? " " : ""}
+                  </span>
+                ),
+              )}
               {count !== undefined && (
                 <span
                   aria-label="count"
