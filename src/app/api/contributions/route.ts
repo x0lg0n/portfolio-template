@@ -41,11 +41,42 @@ function cleanBody(raw: string | null): string {
   if (!raw) return "";
   let text = raw
     .replace(/<!--[\s\S]*?-->/g, "")
-    .replace(/```[\s\S]*?```/g, "")
-    .replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)/g, "")
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, "");
-  text = text.replace(/^[#>*_`-]+\s*/gm, "").replace(/[*_`]/g, "");
-  return text.replace(/\s+/g, " ").trim().slice(0, 240);
+    .replace(/```[\s\S]*?(?:```|$)/g, "")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/^\s*[-*+]\s*\[[ xX]\]\s*/gm, "")
+    .replace(/^\s*[-*+]\s+/gm, "")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^>\s*/gm, "")
+    .replace(/[*_`~]/g, "");
+
+  const markers = [
+    "pre-submit checks",
+    "type of change",
+    "checklist",
+    "screenshots",
+    "testing",
+    "additional context",
+    "related issues",
+    "linked issues",
+    "merge instructions",
+  ];
+  const lower = text.toLowerCase();
+  const cut = markers
+    .map((marker) => lower.indexOf(marker))
+    .filter((index) => index > 20)
+    .sort((a, b) => a - b)[0];
+  if (cut !== undefined) text = text.slice(0, cut);
+
+  text = text
+    .replace(/closes\s+#?\d*\s*/gi, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/[.,;:\s-]+$/, "");
+
+  if (/^summary\b/i.test(text)) text = text.replace(/^summary\b\s*/i, "").trim();
+  if (/^description\b/i.test(text)) text = text.replace(/^description\b\s*/i, "").trim();
+  return text.slice(0, 240);
 }
 
 async function fetchIssue(
