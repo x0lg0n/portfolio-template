@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar";
 import { PaletteProvider } from "@/components/palette-provider";
 import PaletteSidebar from "@/components/palette-sidebar";
 import { KeyboardShortcuts } from "@/components/keyboard-shortcuts";
+import { SecretNotification } from "@/components/secret-notification";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import SmoothScroll from "@/components/smooth-scroll";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -134,6 +135,7 @@ export default function RootLayout({
             <Navbar />
             <PaletteSidebar />
             <KeyboardShortcuts />
+            <SecretNotification />
           </TooltipProvider>
         </PaletteProvider>
       </body>
