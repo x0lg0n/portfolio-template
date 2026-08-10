@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/page-header";
 import { ProjectCard } from "@/components/project-card";
-import { DATA } from "@/data/resume";
+import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -10,25 +10,27 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsPage() {
-  const projects = DATA.projects.filter((p) => p.active);
+  const activeProjects = projects.filter((p) => p.active);
 
   return (
     <main className="min-h-dvh flex flex-col gap-14 relative">
       <PageHeader
         path={["projects"]}
         title="Projects"
-        count={projects.length}
+        count={activeProjects.length}
         description="A collection of things I've built and shipped."
       />
 
-      {projects.length > 0 ? (
+      {activeProjects.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {projects.map((project) => (
+          {activeProjects.map((project) => (
             <ProjectCard
               key={project.slug}
+              slug={project.slug}
               title={project.title}
               description={project.description}
               dates={project.dates}
+              stars={project.stars}
               tags={project.technologies}
               image={project.image}
               video={project.video}

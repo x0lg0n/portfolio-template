@@ -1,9 +1,10 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { ProjectLikeButton } from "@/components/project-like-button";
 import { Tag } from "@/components/tag";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight, Tags } from "lucide-react";
+import { ArrowUpRight, Star, Tags } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import Markdown from "react-markdown";
@@ -29,12 +30,14 @@ function ProjectImage({ src, alt }: { src: string; alt: string }) {
 interface Props {
   title: string;
   href?: string;
+  slug?: string;
   description: string;
   dates: string;
   tags: readonly string[];
   link?: string;
   image?: string;
   video?: string;
+  stars?: number;
   links?: readonly {
     icon: React.ReactNode;
     type: string;
@@ -46,14 +49,19 @@ interface Props {
 export function ProjectCard({
   title,
   href,
+  slug,
   description,
   dates,
   tags,
   image,
   video,
+  stars,
   links,
   className,
 }: Props) {
+  const detailHref = slug ? `/projects/${slug}` : href;
+  const external = !slug;
+
   return (
     <div
       className={cn(
@@ -63,9 +71,9 @@ export function ProjectCard({
     >
       <div className="relative shrink-0">
         <Link
-          href={href || "#"}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={detailHref || "#"}
+          target={external ? "_blank" : undefined}
+          rel={external ? "noopener noreferrer" : undefined}
           className="block"
         >
           {video ? (
@@ -104,17 +112,37 @@ export function ProjectCard({
             ))}
           </div>
         )}
+        {slug && (
+          <div className="absolute top-2 left-2">
+            <ProjectLikeButton
+              slug={slug}
+              base={typeof stars === "number" ? stars : 0}
+              className="rounded-full border border-border bg-background/90 backdrop-blur px-2 py-1 hover:bg-background"
+            />
+          </div>
+        )}
       </div>
       <div className="p-6 flex flex-col gap-3 flex-1">
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-col gap-1">
             <h3 className="font-semibold">{title}</h3>
-            <time className="text-xs text-muted-foreground">{dates}</time>
+            <div className="flex items-center gap-2">
+              <time className="text-xs text-muted-foreground">{dates}</time>
+              {typeof stars === "number" && (
+                <span
+                  className="inline-flex items-center gap-1 text-xs text-muted-foreground"
+                  title={`${stars} GitHub star${stars === 1 ? "" : "s"}`}
+                >
+                  <Star className="size-3 fill-current text-primary" aria-hidden />
+                  {stars}
+                </span>
+              )}
+            </div>
           </div>
           <Link
-            href={href || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={detailHref || "#"}
+            target={external ? "_blank" : undefined}
+            rel={external ? "noopener noreferrer" : undefined}
             className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
             aria-label={`Open ${title}`}
           >
