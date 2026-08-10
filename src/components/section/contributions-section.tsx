@@ -17,6 +17,9 @@ import { ACCENTS } from "@/components/palette-provider";
 import { DATA } from "@/data/resume";
 import { Tag } from "@/components/tag";
 import { cn } from "@/lib/utils";
+import { BlurFade } from "@/components/magicui/blur-fade";
+
+const BLUR_FADE_DELAY = 0.04;
 
 const emptySubscribe = () => () => {};
 
@@ -153,7 +156,9 @@ export default function ContributionsSection() {
   const graphTheme = colors;
 
   return (
-    <div className="flex flex-col gap-y-8">
+    <section id="contributions">
+      <BlurFade delay={BLUR_FADE_DELAY * 17}>
+        <div className="flex flex-col gap-y-8">
       <div className="flex flex-col gap-y-4 items-center justify-center">
         <div className="flex items-center w-full">
           <div className="flex-1 h-px bg-linear-to-r from-transparent from-5% via-border via-95% to-transparent" />
@@ -306,6 +311,8 @@ export default function ContributionsSection() {
           })
         )}
       </div>
-    </div>
+      </div>
+      </BlurFade>
+    </section>
   );
 }
