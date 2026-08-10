@@ -1,7 +1,7 @@
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { PageHeader } from "@/components/page-header";
 import { Tag } from "@/components/tag";
-import { posts } from "@/data/posts";
+import { posts, readingTime } from "@/data/posts";
 import { getExternalPosts } from "@/lib/feeds";
 import { ArrowUpRight, ChevronRight, Tags } from "lucide-react";
 import type { Metadata } from "next";
@@ -34,6 +34,7 @@ interface PostItem {
   external: boolean;
   platform?: string;
   platformUrl?: string;
+  readTime?: string;
 }
 
 function formatDate(iso: string): string {
@@ -58,6 +59,7 @@ export default async function BlogPage() {
       href: `/blog/${post.slug}`,
       external: false,
       platform: "blog",
+      readTime: readingTime(post.content),
     })),
     ...externalPosts.map((post) => ({
       title: post.title,
@@ -116,6 +118,11 @@ export default async function BlogPage() {
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {formatDate(post.publishedAt)}
+                      {post.readTime && (
+                        <span className="ml-2 text-muted-foreground/70">
+                          · {post.readTime}
+                        </span>
+                      )}
                       {post.platform && (
                         <span className="ml-2 font-mono text-[10px] uppercase tracking-wider text-muted-foreground/70 border border-border rounded px-1.5 py-0.5 align-middle">
                           {post.external

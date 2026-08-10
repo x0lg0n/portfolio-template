@@ -1,12 +1,13 @@
 import { BlurFade } from "@/components/magicui/blur-fade";
+import MarkdownContent from "@/components/markdown-content";
 import { PageHeader } from "@/components/page-header";
 import { Tag } from "@/components/tag";
-import { posts } from "@/data/posts";
+import { posts, readingTime } from "@/data/posts";
 import { DATA } from "@/data/resume";
 import { Tags } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 export function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
@@ -89,6 +90,7 @@ export default async function BlogPostPage({
         crumbs={[{ label: "blog", href: "/blog" }, { label: post.title }]}
         title={post.title}
         description={post.summary}
+        titleViewTransitionId={post.slug}
       />
       <BlurFade delay={0.04}>
         <div className="flex flex-col gap-2">
@@ -96,6 +98,14 @@ export default async function BlogPostPage({
             <time className="text-xs text-muted-foreground">
               {post.publishedAt}
             </time>
+            {post.author && (
+              <span className="text-xs text-muted-foreground">
+                by <span className="text-link">{post.author}</span>
+              </span>
+            )}
+            <span className="text-xs text-muted-foreground/70">
+              · {readingTime(post.content)}
+            </span>
             <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground/70 border border-border rounded px-1.5 py-0.5">
               blog
             </span>
@@ -115,7 +125,7 @@ export default async function BlogPostPage({
       </BlurFade>
       <BlurFade delay={0.08}>
         <div className="prose max-w-full dark:prose-invert leading-relaxed">
-          <Markdown>{post.content}</Markdown>
+          <MarkdownContent content={post.content} rehypePlugins={[rehypeRaw]} />
         </div>
       </BlurFade>
     </article>

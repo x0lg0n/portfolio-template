@@ -5,6 +5,14 @@ export interface BlogPost {
   summary: string;
   content: string;
   tags: string[];
+  author?: string;
+}
+
+const AUTHOR = "Siddhartha Kunwar";
+
+export function readingTime(content: string): string {
+  const words = content.trim().split(/\s+/).length;
+  return `${Math.max(1, Math.round(words / 200))} min read`;
 }
 
 export const posts: BlogPost[] = [
@@ -12,6 +20,7 @@ export const posts: BlogPost[] = [
     title: "Welcome to my blog",
     slug: "welcome",
     publishedAt: "2026-08-08",
+    author: AUTHOR,
     summary: "What this blog is for, what I'll be writing about, and what you can expect — from deep dives and tutorials to lessons learned in the trenches.",
     content: `Hello, and welcome — this is the very first post on this site.
 
@@ -40,6 +49,7 @@ If you found anything useful, feel free to reach out — and thanks for reading.
     title: "Blockchain Development for Beginners: A Hands-On Intro",
     slug: "blockchain-development-for-beginners",
     publishedAt: "2026-08-09",
+    author: AUTHOR,
     summary:
       "What a blockchain actually is, why it can't be tampered with, and how to build your first block and smart contract step by step.",
     tags: ["Blockchain", "Web3", "Tutorial", "Solidity"],

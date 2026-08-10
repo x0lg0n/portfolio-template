@@ -437,29 +437,6 @@ html[data-magicui-theme-vt="active"]::view-transition-group(root) {
         oklch(from var(--pulse-color, var(--bg)) l c h / 0);
     }
   }
-}
-
-  --animate-marquee: marquee var(--duration) linear infinite;
-  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
-
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(calc(-100% - var(--gap)));
-    }
-  }
-
-  @keyframes marquee-vertical {
-    from {
-      transform: translateY(0);
-    }
-    to {
-      transform: translateY(calc(-100% - var(--gap)));
-    }
-  }
-}
 
 /* Shiki code blocks (dual light/dark theme via CSS vars) */
 pre.shiki,
